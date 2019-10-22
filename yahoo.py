@@ -107,17 +107,21 @@ def archive_photos(yga):
 
         with Mkchdir(basename(name).replace('.', '')):
             photos = yga.albums(a['albumId'])
+            pages = photos['total'] / 20
             p = 0
 
-            for photo in photos['photos']:
-                p += 1
-                pname = unescape_html(photo['photoName'])
-                print "** Fetching photo '%s' (%d/%d)" % (pname, p, photos['total'])
+            for page in range(pages):
+              photos = yga.albums(a['albumId'], start=page * 20)
 
-                photoinfo = get_best_photoinfo(photo['photoInfo'])
-                fname = "%d-%s.jpg" % (photo['photoId'], basename(pname))
-                with open(fname, 'wb') as f:
-                    yga.download_file(photoinfo['displayURL'], f)
+              for photo in photos['photos']:
+                  p += 1
+                  pname = unescape_html(photo['photoName'])
+                  print "** Fetching photo '%s' (%d/%d)" % (pname, p, photos['total'])
+
+                  photoinfo = get_best_photoinfo(photo['photoInfo'])
+                  fname = "%d-%s.jpg" % (photo['photoId'], basename(pname))
+                  with open(fname, 'wb') as f:
+                      yga.download_file(photoinfo['displayURL'], f)
 
 def archive_db(yga, group):
     json = yga.database()

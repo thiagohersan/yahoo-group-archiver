@@ -107,7 +107,7 @@ def archive_photos(yga):
 
         with Mkchdir(basename(name).replace('.', '')):
             photos = yga.albums(a['albumId'])
-            pages = photos['total'] / 20
+            pages = (photos['total'] / 20) + 1
             p = 0
 
             for page in range(pages):
